@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx prisma generate && node --watch --env-file=.env server.js",
-    "dev:migrate": "npx prisma migrate dev && docker compose exec app npx prisma generate && docker compose restart app"
+    "dev:migrate": "npx prisma migrate dev && docker compose up -d app && docker compose exec app npx prisma generate && docker compose restart app"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,7 @@
   "type": "module",
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
+    "dotenv": "^16.4.5",
     "@prisma/client": "^7.3.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
