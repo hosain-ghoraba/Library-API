@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import UniqueConstraintException from "../../errors/uniqueConstraintError.js";
+import UniqueConstraintException from "../errors/uniqueConstraintError.js";
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof ZodError) {
