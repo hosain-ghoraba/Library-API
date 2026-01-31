@@ -1,0 +1,23 @@
+{
+  "name": "library-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx prisma generate && node --watch --env-file=.env server.js",
+    "dev:migrate": "npx prisma migrate dev && docker compose exec app npx prisma generate && docker compose restart app"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "pg": "^8.17.2",
+    "prisma": "^7.3.0",
+    "zod": "^4.3.6"
+  }
+}

@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Book {
+  id                Int         @id @default(autoincrement())
+  title             String
+  author            String
+  isbn              String      @unique
+  baseQuantity      Int
+  availableQuantity Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  borrowingRecords  Borrowing[]
+
+  @@index(title)
+  @@index(author)
+}
+
+model Borrower {
+  id               Int         @id @default(autoincrement())
+  name             String
+  email            String      @unique
+  hashedPassword   String
+  registeredDate   DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  borrowingRecords Borrowing[]
+}
+
+model Borrowing {
+  id         Int       @id @default(autoincrement())
+  borrowerId Int
+  bookId     Int
+  borrowedAt DateTime  @default(now())
+  dueDate    DateTime // calculated & set when creating the record in the controller
+  returnedAt DateTime? // NULL = not returned yet
+  borrower   Borrower  @relation(fields: [borrowerId], references: [id], onDelete: Cascade)
+  book       Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  // 1 - This composite index is to make returning a book fast (because we first have to find the record using bookId , borrowerId, and where returnedAt is null)
+  // 2 - leftmost prefix rule : We start by returnedAt because we want to allow filtering by returnedAt only (maybe in analytisc ?)
+  @@index([returnedAt, bookId, borrowerId])
+  @@map("BorrowingRecord")
+}
