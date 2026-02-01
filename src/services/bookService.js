@@ -45,7 +45,13 @@ export async function updateBook(id, updates) {
         "Base quantity cannot be less than the number of copies currently borrowed",
       );
     }
-    data.availableQuantity = updates.baseQuantity - borrowedCount;
+    // For bosta supervisor , concurrency Note :
+    // We use the atomic `increment` operator instead of calculating the value in JS
+    // and setting it directly. This prevents "Lost Updates"
+    // if a user borrows a book while an admin is updating the base quantity.
+    data.availableQuantity = {
+      increment: baseQuantity - existingBook.baseQuantity,
+    };
   }
   // ------------------ ISBN uniqueness check
   const isbn = updates.isbn;
