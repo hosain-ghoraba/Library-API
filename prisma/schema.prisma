@@ -43,8 +43,5 @@ model Borrowing {
   borrower   Borrower  @relation(fields: [borrowerId], references: [id], onDelete: Cascade)
   book       Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
-  // 1 - This composite index is to make returning a book fast (because we first have to find the record using bookId , borrowerId, and where returnedAt is null)
-  // 2 - leftmost prefix rule : We start by returnedAt because we want to allow filtering by returnedAt only (maybe in analytisc ?)
-  @@index([returnedAt, bookId, borrowerId])
   @@map("BorrowingRecord")
 }
