@@ -5,6 +5,19 @@ import EntityNotFoundError from "../errors/entityNotFoundError.js";
 
 const SALT_ROUNDS = 10;
 
+export async function listBorrowers() {
+  const borrowers = await prisma.borrower.findMany({
+    orderBy: { id: "asc" },
+  });
+  return borrowers.map((b) => ({
+    id: b.id,
+    name: b.name,
+    email: b.email,
+    registeredDate: b.registeredDate,
+    updatedAt: b.updatedAt,
+  }));
+}
+
 export async function createBorrower(name, email, password) {
   const existing = await prisma.borrower.findUnique({ where: { email } });
   if (existing) {

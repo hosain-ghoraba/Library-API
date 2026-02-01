@@ -1,4 +1,5 @@
 import express from "express";
+import { z } from "zod";
 import validate from "../middlewares/validateRequest.js";
 import { registry } from "../config/openapi.js";
 import {
@@ -8,6 +9,7 @@ import {
   borrowerResponseSchema,
 } from "../schemas/borrowerSchema.js";
 import {
+  listBorrowers,
   registerBorrower,
   updateBorrower,
   deleteBorrower,
@@ -15,6 +17,29 @@ import {
 
 const router = express.Router();
 
+// -----------------------------------------
+registry.registerPath({
+  method: "get",
+  path: "/api/borrowers",
+  tags: ["Borrowers"],
+  summary: "List all borrowers",
+  description:
+    "Returns all borrowers. No pagination or search. Ordered by ID ascending.",
+  responses: {
+    200: {
+      description: "List of all borrowers",
+      content: {
+        "application/json": {
+          schema: z.array(borrowerResponseSchema).openapi("BorrowerList"),
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+router.get("/", listBorrowers);
 // -----------------------------------------
 registry.registerPath({
   method: "post",

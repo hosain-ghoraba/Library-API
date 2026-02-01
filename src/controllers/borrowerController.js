@@ -1,5 +1,10 @@
 import * as borrowerService from "../services/borrowerService.js";
 
+export async function listBorrowers(req, res) {
+  const borrowers = await borrowerService.listBorrowers();
+  res.status(200).json(borrowers);
+}
+
 export async function registerBorrower(req, res) {
   const { name, email, password } = req.validated.body;
   const borrower = await borrowerService.createBorrower(name, email, password);
