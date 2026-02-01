@@ -2,7 +2,10 @@ import { z } from "zod";
 import { inputIdSchema } from "./inputIdSchema.js";
 
 const openApi = {
-  bookName: { example: "The Great Gatsby", description: "Title of the borrowed book" },
+  bookName: {
+    example: "The Great Gatsby",
+    description: "Title of the borrowed book",
+  },
   borrowerId: { example: 1, description: "Borrower ID" },
   bookId: { example: 1, description: "Book ID" },
   id: { example: 1, description: "Borrowing record ID" },
@@ -17,6 +20,10 @@ const openApi = {
   returnedAt: {
     example: null,
     description: "When the book was returned (null if not yet returned)",
+  },
+  overdueCount: {
+    example: 2,
+    description: "Number of copies currently overdue",
   },
 };
 
@@ -59,3 +66,15 @@ export const borrowingResponseSchema = z
     returnedAt: z.string().datetime().nullable().openapi(openApi.returnedAt),
   })
   .openapi("Borrowing");
+
+const overdueBookItemSchema = z
+  .object({
+    bookId: z.number().int().openapi(openApi.bookId),
+    bookName: z.string().openapi(openApi.bookName),
+    overdueCount: z.number().int().openapi(openApi.overdueCount),
+  })
+  .openapi("OverdueBookItem");
+
+export const overdueBooksResponseSchema = z
+  .array(overdueBookItemSchema)
+  .openapi("OverdueBooksList");

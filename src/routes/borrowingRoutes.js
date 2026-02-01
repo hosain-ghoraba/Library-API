@@ -5,8 +5,13 @@ import {
   borrowBookSchema,
   returnBookSchema,
   borrowingResponseSchema,
+  overdueBooksResponseSchema,
 } from "../schemas/borrowingSchema.js";
-import { borrowBook, returnBook } from "../controllers/borrowingController.js";
+import {
+  borrowBook,
+  returnBook,
+  listOverdueBooks,
+} from "../controllers/borrowingController.js";
 
 const router = express.Router();
 
@@ -51,6 +56,30 @@ registry.registerPath({
   },
 });
 router.post("/", validate(borrowBookSchema), borrowBook);
+
+// -----------------------------------------
+registry.registerPath({
+  method: "get",
+  path: "/borrowings/overdue",
+  tags: ["Borrowings"],
+  summary: "List overdue books",
+  description:
+    "Returns each book that has at least one copy overdue (not returned and past due date), with book id, name, and number of overdue copies.",
+  responses: {
+    200: {
+      description: "List of overdue books with counts",
+      content: {
+        "application/json": {
+          schema: overdueBooksResponseSchema,
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+router.get("/overdue", listOverdueBooks);
 
 // -----------------------------------------
 registry.registerPath({

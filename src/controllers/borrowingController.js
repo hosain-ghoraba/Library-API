@@ -19,3 +19,8 @@ export async function returnBook(req, res) {
   );
   res.status(200).json(borrowing);
 }
+
+export async function listOverdueBooks(req, res) {
+  const overdueBooks = await borrowProcessService.getOverdueBooks();
+  res.status(200).json(overdueBooks);
+}

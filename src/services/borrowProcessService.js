@@ -81,6 +81,24 @@ export async function getBorrowingsByBorrowerId(borrowerId) {
   }));
 }
 
+export async function getOverdueBooks() {
+  const now = new Date();
+
+  const result = await prisma.$queryRaw`
+    SELECT 
+      b.id AS "bookId", 
+      b.title AS "bookName", 
+      COUNT(br.id)::int AS "overdueCount" 
+    FROM "Book" b
+    JOIN "BorrowingRecord" br ON b.id = br."bookId"
+    WHERE br."returnedAt" IS NULL 
+      AND br."dueDate" < ${now}
+    GROUP BY b.id
+  `;
+
+  return result;
+}
+
 export async function returnBook(borrowerId, bookId) {
   const borrowing = await prisma.borrowing.findFirst({
     // this will use the parial index
