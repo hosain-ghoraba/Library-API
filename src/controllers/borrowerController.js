@@ -12,3 +12,9 @@ export async function updateBorrower(req, res) {
   const borrower = await borrowerService.updateBorrower(Number(id), updates);
   res.status(200).json(borrower);
 }
+
+export async function deleteBorrower(req, res) {
+  const { id } = req.validated.params;
+  await borrowerService.deleteBorrower(Number(id));
+  res.status(204).send();
+}

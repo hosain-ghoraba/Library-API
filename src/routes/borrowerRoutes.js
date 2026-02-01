@@ -4,11 +4,13 @@ import { registry } from "../config/openapi.js";
 import {
   registerBorrowerSchema,
   updateBorrowerSchema,
+  deleteBorrowerSchema,
   borrowerResponseSchema,
 } from "../schemas/borrowerSchema.js";
 import {
   registerBorrower,
   updateBorrower,
+  deleteBorrower,
 } from "../controllers/borrowerController.js";
 
 const router = express.Router();
@@ -93,5 +95,32 @@ registry.registerPath({
   },
 });
 router.patch("/:id", validate(updateBorrowerSchema), updateBorrower);
+// -----------------------------------------
+registry.registerPath({
+  method: "delete",
+  path: "/api/borrowers/{id}",
+  tags: ["Borrowers"],
+  summary: "Delete a borrower",
+  description:
+    "Deletes a borrower by ID. Associated borrowing records are removed (cascade).",
+  request: {
+    params: deleteBorrowerSchema.shape.params,
+  },
+  responses: {
+    204: {
+      description: "Borrower deleted successfully",
+    },
+    400: {
+      description: "Validation error (invalid id format)",
+    },
+    404: {
+      description: "Borrower not found",
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+router.delete("/:id", validate(deleteBorrowerSchema), deleteBorrower);
 // -----------------------------------------
 export default router;

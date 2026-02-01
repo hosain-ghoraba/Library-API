@@ -53,3 +53,11 @@ export async function updateBorrower(id, updates) {
     updatedAt: borrower.updatedAt,
   };
 }
+
+export async function deleteBorrower(id) {
+  const existing = await prisma.borrower.findUnique({ where: { id } });
+  if (!existing) {
+    throw new EntityNotFoundError(`Borrower with id ${id} not found`);
+  }
+  await prisma.borrower.delete({ where: { id } });
+}

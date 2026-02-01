@@ -35,6 +35,12 @@ export const registerBorrowerSchema = z.object({
     .openapi("RegisterBorrowerRequest"),
 });
 
+export const deleteBorrowerSchema = z.object({
+  params: z.object({
+    id: inputIdSchema,
+  }),
+});
+
 export const updateBorrowerSchema = z.object({
   params: z.object({
     id: inputIdSchema,
