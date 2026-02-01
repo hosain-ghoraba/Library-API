@@ -53,17 +53,17 @@ export async function updateBook(id, updates) {
       increment: baseQuantity - existingBook.baseQuantity,
     };
   }
-  // ------------------ ISBN uniqueness check
+  // ------------------ ISBN uniqueness check (exclude current book)
   const isbn = updates.isbn;
   if (isbn !== undefined) {
-    if (await prisma.book.findUnique({ where: { isbn } })) {
+    if (await prisma.book.findFirst({ where: { isbn, id: { not: id } } })) {
       throw new DBConflictError("A book with this ISBN already exists");
     }
   }
-  // ------------------ shelf location uniqueness check
+  // ------------------ shelf location uniqueness check (exclude current book)
   const shelfLocation = updates.shelfLocation;
   if (shelfLocation !== undefined) {
-    if (await prisma.book.findUnique({ where: { shelfLocation } })) {
+    if (await prisma.book.findFirst({ where: { shelfLocation, id: { not: id } } })) {
       throw new DBConflictError("A book already exists at this shelf location");
     }
   }
