@@ -20,7 +20,7 @@ const router = express.Router();
 // -----------------------------------------
 registry.registerPath({
   method: "get",
-  path: "/api/borrowers",
+  path: "/borrowers",
   tags: ["Borrowers"],
   summary: "List all borrowers",
   description:
@@ -43,7 +43,7 @@ router.get("/", listBorrowers);
 // -----------------------------------------
 registry.registerPath({
   method: "post",
-  path: "/api/borrowers",
+  path: "/borrowers",
   tags: ["Borrowers"],
   summary: "Register a borrower",
   description:
@@ -81,7 +81,7 @@ router.post("/", validate(registerBorrowerSchema), registerBorrower);
 // -----------------------------------------
 registry.registerPath({
   method: "patch",
-  path: "/api/borrowers/{id}",
+  path: "/borrowers/{id}",
   tags: ["Borrowers"],
   summary: "Update borrower's details",
   description:
@@ -123,7 +123,7 @@ router.patch("/:id", validate(updateBorrowerSchema), updateBorrower);
 // -----------------------------------------
 registry.registerPath({
   method: "delete",
-  path: "/api/borrowers/{id}",
+  path: "/borrowers/{id}",
   tags: ["Borrowers"],
   summary: "Delete a borrower",
   description:

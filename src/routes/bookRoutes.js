@@ -21,7 +21,7 @@ const router = express.Router();
 // -----------------------------------------
 registry.registerPath({
   method: "get",
-  path: "/api/books",
+  path: "/books",
   tags: ["Books"],
   summary: "List allbooks (with optional filters)",
   description:
@@ -47,7 +47,7 @@ router.get("/", validate(listBooksQuerySchema), getBooks);
 // -----------------------------------------
 registry.registerPath({
   method: "post",
-  path: "/api/books",
+  path: "/books",
   tags: ["Books"],
   summary: "Add a new book",
   description:
@@ -85,7 +85,7 @@ router.post("/", validate(addBookSchema), addBook);
 // -----------------------------------------
 registry.registerPath({
   method: "patch",
-  path: "/api/books/{id}",
+  path: "/books/{id}",
   tags: ["Books"],
   summary: "Update a book",
   description:
@@ -128,7 +128,7 @@ router.patch("/:id", validate(updateBookSchema), updateBook);
 // -----------------------------------------
 registry.registerPath({
   method: "delete",
-  path: "/api/books/{id}",
+  path: "/books/{id}",
   tags: ["Books"],
   summary: "Delete a book",
   request: {
