@@ -2,6 +2,7 @@ import { z } from "zod";
 import { inputIdSchema } from "./inputIdSchema.js";
 
 const openApi = {
+  bookName: { example: "The Great Gatsby", description: "Title of the borrowed book" },
   borrowerId: { example: 1, description: "Borrower ID" },
   bookId: { example: 1, description: "Book ID" },
   id: { example: 1, description: "Borrowing record ID" },
@@ -33,6 +34,20 @@ export const borrowBookSchema = z.object({
 export const returnBookSchema = z.object({
   body: borrowOrReturnBodySchema,
 });
+
+export const getBorrowingsByBorrowerSchema = z.object({
+  params: z.object({
+    borrowerId: inputIdSchema.openapi(openApi.borrowerId),
+  }),
+});
+
+export const currentBorrowingItemSchema = z
+  .object({
+    bookName: z.string().openapi(openApi.bookName),
+    borrowedAt: z.string().datetime().openapi(openApi.borrowedAt),
+    dueDate: z.string().datetime().openapi(openApi.dueDate),
+  })
+  .openapi("CurrentBorrowingItem");
 
 export const borrowingResponseSchema = z
   .object({

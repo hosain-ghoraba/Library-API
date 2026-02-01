@@ -1,4 +1,13 @@
 import * as borrowerService from "../services/borrowerService.js";
+import * as borrowProcessService from "../services/borrowProcessService.js";
+
+export async function getBorrowings(req, res) {
+  const { borrowerId } = req.validated.params;
+  const borrowings = await borrowProcessService.getBorrowingsByBorrowerId(
+    Number(borrowerId),
+  );
+  res.status(200).json(borrowings);
+}
 
 export async function listBorrowers(req, res) {
   const borrowers = await borrowerService.listBorrowers();

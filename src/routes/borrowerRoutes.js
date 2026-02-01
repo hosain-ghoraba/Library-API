@@ -10,10 +10,15 @@ import {
 } from "../schemas/borrowerSchema.js";
 import {
   listBorrowers,
+  getBorrowings,
   registerBorrower,
   updateBorrower,
   deleteBorrower,
 } from "../controllers/borrowerController.js";
+import {
+  getBorrowingsByBorrowerSchema,
+  currentBorrowingItemSchema,
+} from "../schemas/borrowingSchema.js";
 
 const router = express.Router();
 
@@ -40,6 +45,42 @@ registry.registerPath({
   },
 });
 router.get("/", listBorrowers);
+// -----------------------------------------
+registry.registerPath({
+  method: "get",
+  path: "/borrowers/{borrowerId}/borrowings",
+  tags: ["Borrowers"],
+  summary: "List a borrower's current borrowings",
+  description:
+    "Returns the books the borrower currently has (unreturned borrowings).",
+  request: {
+    params: getBorrowingsByBorrowerSchema.shape.params,
+  },
+  responses: {
+    200: {
+      description:
+        "List of current borrowings (book name, borrowing date, due date)",
+      content: {
+        "application/json": {
+          schema: z
+            .array(currentBorrowingItemSchema)
+            .openapi("CurrentBorrowingList"),
+        },
+      },
+    },
+    404: {
+      description: "Borrower not found",
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+router.get(
+  "/:borrowerId/borrowings",
+  validate(getBorrowingsByBorrowerSchema),
+  getBorrowings,
+);
 // -----------------------------------------
 registry.registerPath({
   method: "post",

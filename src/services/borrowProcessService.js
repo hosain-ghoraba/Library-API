@@ -53,6 +53,34 @@ export async function borrowBook(borrowerId, bookId) {
   });
 }
 
+export async function getBorrowingsByBorrowerId(borrowerId) {
+  const borrower = await prisma.borrower.findUnique({
+    where: { id: borrowerId },
+  });
+  if (!borrower) {
+    throw new EntityNotFoundError(`Borrower with id ${borrowerId} not found`);
+  }
+  const borrowings = await prisma.borrowing.findMany({
+    // this "where" will use the partial index
+    where: {
+      borrowerId,
+      returnedAt: null,
+    },
+    select: {
+      borrowedAt: true,
+      dueDate: true,
+      // eager loading to prevent N+1 queries
+      book: { select: { title: true } },
+    },
+    orderBy: { borrowedAt: "asc" },
+  });
+  return borrowings.map((b) => ({
+    bookName: b.book.title,
+    borrowedAt: b.borrowedAt.toISOString(),
+    dueDate: b.dueDate.toISOString(),
+  }));
+}
+
 export async function returnBook(borrowerId, bookId) {
   const borrowing = await prisma.borrowing.findFirst({
     // this will use the parial index
