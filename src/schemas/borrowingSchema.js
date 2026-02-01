@@ -19,13 +19,19 @@ const openApi = {
   },
 };
 
+const borrowOrReturnBodySchema = z
+  .object({
+    borrowerId: inputIdSchema.openapi(openApi.borrowerId),
+    bookId: inputIdSchema.openapi(openApi.bookId),
+  })
+  .openapi("BorrowOrReturnBookRequest");
+
 export const borrowBookSchema = z.object({
-  body: z
-    .object({
-      borrowerId: inputIdSchema.openapi(openApi.borrowerId),
-      bookId: inputIdSchema.openapi(openApi.bookId),
-    })
-    .openapi("BorrowBookRequest"),
+  body: borrowOrReturnBodySchema,
+});
+
+export const returnBookSchema = z.object({
+  body: borrowOrReturnBodySchema,
 });
 
 export const borrowingResponseSchema = z

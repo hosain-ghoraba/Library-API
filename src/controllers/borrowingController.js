@@ -9,3 +9,13 @@ export async function borrowBook(req, res) {
   );
   res.status(201).json(borrowing);
 }
+
+export async function returnBook(req, res) {
+  const { borrowerId, bookId } = req.validated.body;
+
+  const borrowing = await borrowProcessService.returnBook(
+    Number(borrowerId),
+    Number(bookId),
+  );
+  res.status(200).json(borrowing);
+}

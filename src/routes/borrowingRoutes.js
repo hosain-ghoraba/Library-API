@@ -3,9 +3,10 @@ import validate from "../middlewares/validateRequest.js";
 import { registry } from "../config/openapi.js";
 import {
   borrowBookSchema,
+  returnBookSchema,
   borrowingResponseSchema,
 } from "../schemas/borrowingSchema.js";
-import { borrowBook } from "../controllers/borrowingController.js";
+import { borrowBook, returnBook } from "../controllers/borrowingController.js";
 
 const router = express.Router();
 
@@ -50,5 +51,44 @@ registry.registerPath({
   },
 });
 router.post("/", validate(borrowBookSchema), borrowBook);
+
+// -----------------------------------------
+registry.registerPath({
+  method: "post",
+  path: "/borrowings/return",
+  tags: ["Borrowings"],
+  summary: "Return a book",
+  description:
+    "Marks a borrowing record as returned for the given borrower and book. The book's available quantity is incremented.",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: returnBookSchema.shape.body,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Book returned successfully",
+      content: {
+        "application/json": {
+          schema: borrowingResponseSchema,
+        },
+      },
+    },
+    400: {
+      description: "Validation error (invalid or missing fields)",
+    },
+    404: {
+      description: "No (unreturned) borrowing found for the borrower and book",
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+router.post("/return", validate(returnBookSchema), returnBook);
 // -----------------------------------------
 export default router;

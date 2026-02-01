@@ -52,3 +52,35 @@ export async function borrowBook(borrowerId, bookId) {
     return borrowing;
   });
 }
+
+export async function returnBook(borrowerId, bookId) {
+  const borrowing = await prisma.borrowing.findFirst({
+    // this will use the parial index
+    where: {
+      borrowerId,
+      bookId,
+      returnedAt: null,
+    },
+  });
+  if (!borrowing) {
+    throw new EntityNotFoundError(
+      `No (unreturned) borrowing found for borrower ${borrowerId} and book ${bookId}`,
+    );
+  }
+
+  const returnedAt = new Date();
+
+  return await prisma.$transaction(async (tx) => {
+    const updated = await tx.borrowing.update({
+      where: { id: borrowing.id },
+      data: { returnedAt },
+    });
+
+    await tx.book.update({
+      where: { id: bookId },
+      data: { availableQuantity: { increment: 1 } },
+    });
+
+    return updated;
+  });
+}
