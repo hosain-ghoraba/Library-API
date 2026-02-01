@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { inputIdSchema } from "./inputIdSchema.js";
 
 const openApi = {
   title: { example: "The Great Gatsby", description: "Book title" },
@@ -10,21 +11,46 @@ const openApi = {
   availableQuantity: { example: 5, description: "Copies available" },
   createdAt: { example: "2026-01-31T12:00:00.000Z", description: "Created at" },
   updatedAt: { example: "2026-01-31T12:00:00.000Z", description: "Updated at" },
-  messageAdded: { example: "Book added successfully" },
 };
 
-export const addBookBodySchema = z
-  .object({
-    title: z.string().trim().min(1).openapi(openApi.title),
-    author: z.string().trim().min(1).openapi(openApi.author),
-    isbn: z.string().trim().min(1).openapi(openApi.isbn),
-    baseQuantity: z.number().int().min(0).openapi(openApi.baseQuantity),
-    shelfLocation: z.string().trim().min(1).openapi(openApi.shelfLocation),
-  })
-  .openapi("AddBookRequest");
-
 export const addBookSchema = z.object({
-  body: addBookBodySchema,
+  body: z
+    .object({
+      title: z.string().trim().min(1).openapi(openApi.title),
+      author: z.string().trim().min(1).openapi(openApi.author),
+      isbn: z.string().trim().min(1).openapi(openApi.isbn),
+      baseQuantity: z.number().int().min(0).openapi(openApi.baseQuantity),
+      shelfLocation: z.string().trim().min(1).openapi(openApi.shelfLocation),
+    })
+    .openapi("AddBookRequest"),
+});
+
+export const updateBookSchema = z.object({
+  params: z.object({
+    id: inputIdSchema,
+  }),
+  body: z
+    .object({
+      title: z.string().trim().min(1).optional().openapi(openApi.title),
+      author: z.string().trim().min(1).optional().openapi(openApi.author),
+      isbn: z.string().trim().min(1).optional().openapi(openApi.isbn),
+      baseQuantity: z
+        .number()
+        .int()
+        .min(0)
+        .optional()
+        .openapi(openApi.baseQuantity),
+      shelfLocation: z
+        .string()
+        .trim()
+        .min(1)
+        .optional()
+        .openapi(openApi.shelfLocation),
+    })
+    .refine((data) => Object.keys(data ?? {}).length > 0, {
+      message: "At least one field must be provided for update",
+    })
+    .openapi("UpdateBookRequest"),
 });
 
 export const bookResponseSchema = z
@@ -40,10 +66,3 @@ export const bookResponseSchema = z
     updatedAt: z.string().datetime().openapi(openApi.updatedAt),
   })
   .openapi("Book");
-
-export const addBookSuccessSchema = z
-  .object({
-    message: z.string().openapi(openApi.messageAdded),
-    data: bookResponseSchema,
-  })
-  .openapi("AddBookSuccess");
