@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx prisma generate && node --watch --env-file=.env server.js",
-    "dev:migrate": "npx prisma migrate dev && docker compose up -d app && docker compose exec app npx prisma generate && docker compose restart app"
+    "dev:migrate": "npx prisma migrate dev && docker compose up -d app && docker compose exec app npx prisma generate && docker compose restart app",
+    "db:seed": "node prisma/seed.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +17,7 @@
   "type": "module",
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.4.0",
+    "@faker-js/faker": "^10.2.0",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "bcryptjs": "^3.0.3",
