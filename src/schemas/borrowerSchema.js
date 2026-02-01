@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { inputIdSchema } from "./inputIdSchema.js";
 
 const openApi = {
   name: { example: "Jane Doe", description: "Borrower full name" },
@@ -32,6 +33,21 @@ export const registerBorrowerSchema = z.object({
         .openapi(openApi.password),
     })
     .openapi("RegisterBorrowerRequest"),
+});
+
+export const updateBorrowerSchema = z.object({
+  params: z.object({
+    id: inputIdSchema,
+  }),
+  body: z
+    .object({
+      name: z.string().trim().min(1).optional().openapi(openApi.name),
+      email: z.string().trim().email().optional().openapi(openApi.email),
+    })
+    .refine((data) => Object.keys(data ?? {}).length > 0, {
+      message: "At least one field must be provided for update",
+    })
+    .openapi("UpdateBorrowerRequest"),
 });
 
 export const borrowerResponseSchema = z
