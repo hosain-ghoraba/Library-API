@@ -1,5 +1,5 @@
 import prisma from "../config/db.js";
-import UniqueConstraintException from "../errors/uniqueConstraintError.js";
+import UniqueConstraintError from "../errors/uniqueConstraintError.js";
 
 export async function createBook(
   title,
@@ -11,7 +11,7 @@ export async function createBook(
   // ISBN uniqueness check
   const isbnCount = await prisma.book.count({ where: { isbn } });
   if (isbnCount > 0) {
-    throw new UniqueConstraintException("A book with this ISBN already exists");
+    throw new UniqueConstraintError("A book with this ISBN already exists");
   }
 
   // Shelf location uniqueness check
@@ -19,7 +19,7 @@ export async function createBook(
     where: { shelfLocation },
   });
   if (shelfLocationCount > 0) {
-    throw new UniqueConstraintException(
+    throw new UniqueConstraintError(
       "A book already exists at this shelf location",
     );
   }

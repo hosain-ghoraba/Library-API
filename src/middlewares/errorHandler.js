@@ -1,5 +1,6 @@
 import { ZodError } from "zod";
-import UniqueConstraintException from "../errors/uniqueConstraintError.js";
+import UniqueConstraintError from "../errors/uniqueConstraintError.js";
+import EntityNotFoundError from "../errors/entityNotFoundError.js";
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof ZodError) {
@@ -8,8 +9,13 @@ const errorHandler = (err, req, res, next) => {
       errors: err.issues,
     });
   }
-  if (err instanceof UniqueConstraintException) {
+  if (err instanceof UniqueConstraintError) {
     return res.status(409).json({
+      message: err.message,
+    });
+  }
+  if (err instanceof EntityNotFoundError) {
+    return res.status(404).json({
       message: err.message,
     });
   }

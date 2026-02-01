@@ -1,6 +1,6 @@
-export default class UniqueConstraintException extends Error {
+export default class UniqueConstraintError extends Error {
   constructor(message) {
     super(message);
-    this.name = "UniqueConstraintException";
+    this.name = "UniqueConstraintError";
   }
 }
