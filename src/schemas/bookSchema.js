@@ -25,6 +25,14 @@ export const addBookSchema = z.object({
     .openapi("AddBookRequest"),
 });
 
+export const listBooksQuerySchema = z.object({
+  query: z.object({
+    title: z.string().trim().min(1).optional().openapi({ description: "Filter by title (partial, case-insensitive)" }),
+    author: z.string().trim().min(1).optional().openapi({ description: "Filter by author (partial, case-insensitive)" }),
+    isbn: z.string().trim().min(1).optional().openapi({ description: "Filter by ISBN (partial, case-insensitive)" }),
+  }),
+});
+
 export const deleteBookSchema = z.object({
   params: z.object({
     id: inputIdSchema,

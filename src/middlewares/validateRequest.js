@@ -4,7 +4,7 @@ const validate = (schema) => (req, res, next) => {
     query: req.query,
     params: req.params,
   });
-  Object.assign(req, result);
+  req.validated = result;
   next();
 };
 

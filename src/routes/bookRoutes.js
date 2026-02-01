@@ -1,20 +1,50 @@
 import express from "express";
+import { z } from "zod";
 import validate from "../middlewares/validateRequest.js";
 import { registry } from "../config/openapi.js";
 import {
   addBookSchema,
   bookResponseSchema,
   deleteBookSchema,
+  listBooksQuerySchema,
   updateBookSchema,
 } from "../schemas/bookSchema.js";
 import {
   addBook,
   deleteBook,
+  getBooks,
   updateBook,
 } from "../controllers/bookController.js";
 
 const router = express.Router();
 
+// -----------------------------------------
+registry.registerPath({
+  method: "get",
+  path: "/api/books",
+  tags: ["Books"],
+  summary: "List allbooks (with optional filters)",
+  description:
+    "Returns all books. Optionally filter with multiple query params: title, author, isbn (partial match, case-insensitive). All provided params are ANDed.",
+  request: {
+    query: listBooksQuerySchema.shape.query,
+  },
+  responses: {
+    200: {
+      description: "List of books",
+      content: {
+        "application/json": {
+          schema: z.array(bookResponseSchema).openapi("BookList"),
+        },
+      },
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+router.get("/", validate(listBooksQuerySchema), getBooks);
+// -----------------------------------------
 registry.registerPath({
   method: "post",
   path: "/api/books",

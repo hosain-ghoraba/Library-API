@@ -2,6 +2,26 @@ import prisma from "../config/db.js";
 import DBConflictError from "../errors/dbConflictError.js";
 import EntityNotFoundError from "../errors/entityNotFoundError.js";
 
+export async function getBooks(filters) {
+  const { title, author, isbn } = filters ?? {};
+
+  const conditions = [];
+  if (title) {
+    conditions.push({ title: { contains: title, mode: "insensitive" } });
+  }
+  if (author) {
+    conditions.push({ author: { contains: author, mode: "insensitive" } });
+  }
+  if (isbn) {
+    conditions.push({ isbn: { contains: isbn, mode: "insensitive" } });
+  }
+  const where = conditions.length ? { AND: conditions } : undefined;
+  return await prisma.book.findMany({
+    where,
+    orderBy: { id: "asc" },
+  });
+}
+
 export async function createBook(
   title,
   author,
@@ -63,7 +83,9 @@ export async function updateBook(id, updates) {
   // ------------------ shelf location uniqueness check (exclude current book)
   const shelfLocation = updates.shelfLocation;
   if (shelfLocation !== undefined) {
-    if (await prisma.book.findFirst({ where: { shelfLocation, id: { not: id } } })) {
+    if (
+      await prisma.book.findFirst({ where: { shelfLocation, id: { not: id } } })
+    ) {
       throw new DBConflictError("A book already exists at this shelf location");
     }
   }
