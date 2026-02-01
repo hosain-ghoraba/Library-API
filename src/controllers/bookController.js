@@ -20,3 +20,9 @@ export async function updateBook(req, res) {
   const updatedBook = await bookService.updateBook(Number(id), updates);
   res.status(200).json(updatedBook);
 }
+
+export async function deleteBook(req, res) {
+  const { id } = req.params;
+  await bookService.deleteBook(Number(id));
+  res.status(204).send();
+}

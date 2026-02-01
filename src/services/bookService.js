@@ -72,3 +72,11 @@ export async function updateBook(id, updates) {
     data,
   });
 }
+
+export async function deleteBook(id) {
+  const existingBook = await prisma.book.findUnique({ where: { id } });
+  if (!existingBook) {
+    throw new EntityNotFoundError(`Book with id ${id} not found`);
+  }
+  await prisma.book.delete({ where: { id } });
+}

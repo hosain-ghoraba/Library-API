@@ -4,9 +4,14 @@ import { registry } from "../config/openapi.js";
 import {
   addBookSchema,
   bookResponseSchema,
+  deleteBookSchema,
   updateBookSchema,
 } from "../schemas/bookSchema.js";
-import { addBook, updateBook } from "../controllers/bookController.js";
+import {
+  addBook,
+  deleteBook,
+  updateBook,
+} from "../controllers/bookController.js";
 
 const router = express.Router();
 
@@ -90,5 +95,30 @@ registry.registerPath({
   },
 });
 router.patch("/:id", validate(updateBookSchema), updateBook);
+// -----------------------------------------
+registry.registerPath({
+  method: "delete",
+  path: "/api/books/{id}",
+  tags: ["Books"],
+  summary: "Delete a book",
+  request: {
+    params: deleteBookSchema.shape.params,
+  },
+  responses: {
+    204: {
+      description: "Book deleted successfully",
+    },
+    400: {
+      description: "Validation error (invalid parameter)",
+    },
+    404: {
+      description: "Book not found",
+    },
+    500: {
+      description: "Internal server error",
+    },
+  },
+});
+router.delete("/:id", validate(deleteBookSchema), deleteBook);
 // -----------------------------------------
 export default router;

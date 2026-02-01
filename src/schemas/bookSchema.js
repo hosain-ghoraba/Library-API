@@ -25,6 +25,12 @@ export const addBookSchema = z.object({
     .openapi("AddBookRequest"),
 });
 
+export const deleteBookSchema = z.object({
+  params: z.object({
+    id: inputIdSchema,
+  }),
+});
+
 export const updateBookSchema = z.object({
   params: z.object({
     id: inputIdSchema,
